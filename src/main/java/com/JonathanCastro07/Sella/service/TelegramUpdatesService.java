@@ -97,7 +97,8 @@ public class TelegramUpdatesService {
                     n.getComprador().getEmail(),
                     n.getComprador().getNombre(),
                     n.getRifa().getNombre(),
-                    numero
+                    numero,
+                    n.getRifa().getFechaSorteo()
             );
 
             telegramService.responderCallback(callbackId, "Pago confirmado ✅");

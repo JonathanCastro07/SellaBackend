@@ -125,7 +125,8 @@ public class NumeroController {
                 n.getComprador().getEmail(),
                 n.getComprador().getNombre(),
                 n.getRifa().getNombre(),
-                numero
+                numero,
+                n.getRifa().getFechaSorteo()
         );
 
         return ResponseEntity.ok("Pago confirmado");
