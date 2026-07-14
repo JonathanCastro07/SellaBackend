@@ -101,7 +101,7 @@ public class RifaController {
                         n.getNumero(),
                         n.getEstado(),
                         n.getComprador() != null
-                                ? new CompradorResponse(n.getComprador().getNombre(), n.getComprador().getCelular())
+                                ? new CompradorResponse(n.getComprador().getNombre(), n.getComprador().getCelular(), n.getComprador().getUrlComprobante())
                                 : null
                 ))
                 .toList();

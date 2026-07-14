@@ -9,6 +9,8 @@ import com.JonathanCastro07.Sella.repository.NumeroRepository;
 import com.JonathanCastro07.Sella.repository.UsuarioRepository;
 import com.JonathanCastro07.Sella.service.EmailService;
 import com.JonathanCastro07.Sella.service.TelegramService;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +19,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/rifas/{rifaId}/numeros/{numero}")
@@ -33,6 +35,8 @@ public class NumeroController {
     private TelegramService telegramService;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private Cloudinary cloudinary;
 
     private static final long PLAZO_HORAS = 24;
     private static final String CARPETA_UPLOADS = "uploads/comprobantes";
@@ -82,17 +86,16 @@ public class NumeroController {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Número no encontrado"));
 
         if (n.getEstado() != EstadoNumero.PENDIENTE || n.getComprador() == null) {
-            throw new EstadoInvalidoException("Este numero ya no se encuentra disponible");
+            throw new EstadoInvalidoException("Este número no tiene un apartado activo");
         }
 
-        Path carpeta = Path.of(CARPETA_UPLOADS);
-        Files.createDirectories(carpeta);
+        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                "folder", "sella/comprobantes",
+                "resource_type", "auto"
+        ));
+        String urlSegura = uploadResult.get("secure_url").toString();
 
-        String nombreArchivo = UUID.randomUUID() + "-" + file.getOriginalFilename();
-        Path destino = carpeta.resolve(nombreArchivo);
-        file.transferTo(destino);
-
-        n.getComprador().setUrlComprobante(destino.toString());
+        n.getComprador().setUrlComprobante(urlSegura);
         numeroRepository.save(n);
 
         return ResponseEntity.ok("Comprobante subido correctamente");
