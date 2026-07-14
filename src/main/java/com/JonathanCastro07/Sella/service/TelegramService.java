@@ -78,6 +78,16 @@ public class TelegramService {
         post("/editMessageText", body);
     }
 
+    public void enviarFoto(String urlFoto, String texto) {
+        Map<String, Object> body = Map.of(
+                "chat_id", chatId,
+                "photo", urlFoto,
+                "caption", texto,
+                "parse_mode", "Markdown"
+        );
+        post("/sendPhoto", body);
+    }
+
     public Map<String, Object> obtenerActualizaciones(long offset) {
         String url = urlBase() + "/getUpdates?offset=" + offset + "&timeout=0";
         try {

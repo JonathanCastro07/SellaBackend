@@ -98,6 +98,15 @@ public class NumeroController {
         n.getComprador().setUrlComprobante(urlSegura);
         numeroRepository.save(n);
 
+        telegramService.enviarFoto(
+                urlSegura,
+                "🧾 *Comprobante recibido*\n" +
+                        "Rifa: " + n.getRifa().getNombre() + "\n" +
+                        "Número: " + numero + "\n" +
+                        "Comprador: " + n.getComprador().getNombre() + "\n\n" +
+                        "Usa los botones del mensaje anterior para confirmar o rechazar."
+        );
+
         return ResponseEntity.ok("Comprobante subido correctamente");
     }
 
