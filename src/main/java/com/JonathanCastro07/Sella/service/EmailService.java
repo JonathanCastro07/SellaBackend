@@ -64,6 +64,7 @@ public class EmailService {
 
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
             restTemplate.postForEntity(URL_BREVO, request, String.class);
+            System.out.println("Correo enviado correctamente a: " + destinatario);
 
         } catch (Exception e) {
             System.err.println("Error enviando correo de confirmación: " + e.getMessage());
